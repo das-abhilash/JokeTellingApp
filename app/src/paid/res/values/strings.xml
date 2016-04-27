@@ -1,0 +1,4 @@
+<resources>
+    <string name="ToastMsg">Welcome to our Paid version of the App</string>
+    <string name="visibility">gone</string>
+</resources>

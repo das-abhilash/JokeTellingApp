@@ -1,0 +1,77 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        applicationId "com.udacity.gradle.builditbigger"
+        minSdkVersion 10
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    productFlavors {
+        free {
+            applicationId 'com.udacity.gradle.builditbigger.free'
+            dependencies {
+                compile 'com.google.android.gms:play-services-ads:8.4.0'
+            }
+        }
+        paid {
+            applicationId 'com.udacity.gradle.builditbigger.paid'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':jokewizard')
+    compile project(':jokedisplay')
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile project(path: ':backend', configuration: 'android-endpoints')
+}
+
+task StartTheTest(dependsOn: ":backend:appengineRun") {
+
+
+    // I don't know the reason but whenever I uncomment this below block of code,
+    // the asyncTask unable to fetch the data from Java Library. Only after,
+    // i comment this the async task works... Please let me know the reason.
+
+    /*project(":backend").afterEvaluate { backend ->
+        backend.extensions.appengine.daemon = true
+    }*/
+
+    doLast {
+        println "started the server!"
+        println "starting the Testing!"
+    }
+}
+
+
+task stopAppEngine(dependsOn: ":backend:appengineStop") {
+    doLast {
+        println "Stopped the server!"
+    }
+}
+task unitTest(dependsOn: "test") {
+    doLast {
+        println "Ended the testing!"
+    }
+}
+
+StartTheTest.finalizedBy unitTest
+unitTest.finalizedBy stopAppEngine
+
