@@ -43,35 +43,15 @@ dependencies {
     compile project(path: ':backend', configuration: 'android-endpoints')
 }
 
-task StartTheTest(dependsOn: ":backend:appengineRun") {
 
 
-    // I don't know the reason but whenever I uncomment this below block of code,
-    // the asyncTask unable to fetch the data from Java Library. Only after,
-    // i comment this the async task works... Please let me know the reason.
-
-    /*project(":backend").afterEvaluate { backend ->
+task testLocalServer {
+    dependsOn ':backend:appengineRun'
+    mustRunAfter ':backend:appengineRun'
+   /* project(":backend").afterEvaluate { backend ->
         backend.extensions.appengine.daemon = true
     }*/
-
-    doLast {
-        println "started the server!"
-        println "starting the Testing!"
-    }
+    dependsOn ':app:connectedAndroidTest'
+    finalizedBy ':backend:appengineStop'
 }
-
-
-task stopAppEngine(dependsOn: ":backend:appengineStop") {
-    doLast {
-        println "Stopped the server!"
-    }
-}
-task unitTest(dependsOn: "test") {
-    doLast {
-        println "Ended the testing!"
-    }
-}
-
-StartTheTest.finalizedBy unitTest
-unitTest.finalizedBy stopAppEngine
 
